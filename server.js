@@ -3,12 +3,16 @@ const path = require("path");
 const fs = require("fs");
 
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 3001;
 const filepath = path.join(__dirname, "/public");
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
+
+app.get("/", function (__request, response) {
+    response.sendFile(path.join(filepath, "index.html"));
+});
 
 app.get("/notes", function (__request, response) {
     response.sendFile(path.join(filepath, "notes.html"));
@@ -22,10 +26,6 @@ app.get("/api/notes", function (__request, response) {
 app.get("/api/notes/:id", function (__request, response) {
     let noteSave = JSON.parse(fs.readFileSync("./db/db.json", "utf-8"));
     response.json(noteSave);
-});
-
-app.get("*", function (__request, response) {
-    response.sendFile(path.join(filepath, "index.html"));
 });
 
 
